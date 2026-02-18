@@ -24,7 +24,7 @@
 
 ## 🚀 Live Demo
 
-**[View Live Site →](https://your-deployment-url.com)**
+**[View Live Site →](https://tarditonotarde.github.io/LynchUniverse/)**
 
 ## 📸 Screenshots
 
