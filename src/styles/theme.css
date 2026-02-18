@@ -1,0 +1,105 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Streaming Platform Design System - Netflix-inspired */
+  
+  /* Colors - Ultra precise */
+  --bg-primary: #141414;
+  --bg-elevated: #181818;
+  --bg-hover: #232323;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --text-tertiary: #757575;
+  --accent-red: #E50914;
+  --accent-red-hover: #C11119;
+  
+  /* Spacing System - 8px base */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-10: 80px;
+  
+  /* Layout */
+  --max-content-width: 1280px;
+  --horizontal-padding: 80px;
+  --gutter: 24px;
+  
+  /* Typography - Precise sizing */
+  --text-hero: 52px;
+  --text-section: 22px;
+  --text-card-title: 16px;
+  --text-metadata: 14px;
+  --text-small: 12px;
+  --text-logo: 24px;
+  
+  /* Animation timing */
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Component specific */
+  --navbar-height: 68px;
+  --card-gap: 24px;
+  --card-width: 240px;
+  --border-radius-card: 4px;
+  --button-height: 44px;
+  
+  /* Z-index system */
+  --z-navbar: 50;
+  --z-card-hover: 10;
+  --z-modal-overlay: 100;
+  --z-modal-content: 101;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Remove default margins */
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: none;
+  }
+
+  /* For IE and Edge */
+  * {
+    -ms-overflow-style: none;
+  }
+}

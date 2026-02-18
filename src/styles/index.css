@@ -1,0 +1,44 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Global responsive styles for streaming platform */
+@layer base {
+  /* Smooth scrolling behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  :root {
+    --horizontal-padding: 40px;
+    --card-width: 200px;
+    --text-hero: 42px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --horizontal-padding: 24px;
+    --card-width: 180px;
+    --text-hero: 32px;
+    --text-section: 18px;
+    --navbar-height: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --horizontal-padding: 16px;
+    --card-width: 150px;
+    --text-hero: 28px;
+    --text-section: 16px;
+  }
+}
