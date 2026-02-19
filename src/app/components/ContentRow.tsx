@@ -78,9 +78,9 @@ export function ContentRow({ title, videos, onVideoClick }: ContentRowProps) {
 
       {/* Carousel container */}
       <div className="relative" style={{ overflow: 'visible' }}>
-        {/* Left arrow */}
+        {/* Left arrow - Hidden on mobile */}
         <AnimatePresence>
-          {showLeftArrow && isHovered && (
+          {showLeftArrow && isHovered && !isMobile && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -99,9 +99,9 @@ export function ContentRow({ title, videos, onVideoClick }: ContentRowProps) {
           )}
         </AnimatePresence>
 
-        {/* Right arrow */}
+        {/* Right arrow - Hidden on mobile */}
         <AnimatePresence>
-          {showRightArrow && isHovered && (
+          {showRightArrow && isHovered && !isMobile && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

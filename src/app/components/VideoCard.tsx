@@ -169,24 +169,22 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
             )}
           </AnimatePresence>
 
-          {/* Duration badge - animated - Hidden on mobile */}
-          {!isMobile && (
-            <motion.div 
-              className="absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded backdrop-blur-sm"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                fontSize: '11px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-              animate={{
-                scale: isHovered ? 0.9 : 1,
-                opacity: isHovered ? 0.7 : 1,
-              }}
-              transition={{ duration: 0.2 }}
-            >
-              {video.duration}
-            </motion.div>
-          )}
+          {/* Duration badge - Always visible on mobile */}
+          <motion.div 
+            className="absolute top-2 right-2 px-2 py-1 text-xs font-semibold rounded backdrop-blur-sm"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              fontSize: isMobile ? '10px' : '11px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+            animate={{
+              scale: isMobile ? 1 : (isHovered ? 0.9 : 1),
+              opacity: isMobile ? 1 : (isHovered ? 0.7 : 1),
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            {video.duration}
+          </motion.div>
 
           {/* Hover play icon overlay */}
           <AnimatePresence>
