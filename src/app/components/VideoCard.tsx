@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Plus, Heart, ChevronDown, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useFavorites } from '../contexts/FavoritesContext';
@@ -21,9 +21,10 @@ interface VideoCardProps {
 }
 
 export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { isInMyList, addToMyList, removeFromMyList, isLiked, toggleLike } = useFavorites();
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const videoIsInList = isInMyList(video.id);
   const videoIsLiked = isLiked(video.id);
@@ -38,22 +39,32 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleMouseEnter = () => {
-    if (!isMobile) {
-      setIsHovered(true);
-      onCardHover?.(true);
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        if (isExpanded) {
+          setIsExpanded(false);
+          onCardHover?.(false);
+        }
+      }
+    };
+
+    if (isExpanded) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+  }, [isExpanded, onCardHover]);
+
+  const toggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newExpandedState = !isExpanded;
+    setIsExpanded(newExpandedState);
+    onCardHover?.(newExpandedState);
   };
 
-  const handleMouseLeave = () => {
-    if (!isMobile) {
-      setIsHovered(false);
-      onCardHover?.(false);
-    }
-  };
-
-  const handleCardClick = () => {
-    // Abrir modal con clic o tap (funciona en todos los dispositivos)
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onCardClick(video);
   };
 
@@ -78,6 +89,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ 
@@ -85,23 +97,21 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
         delay: index * 0.08,
         ease: [0.25, 0.46, 0.45, 0.94]
       }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={isMobile ? handleCardClick : undefined}
+      onClick={toggleExpand}
       className="relative cursor-pointer"
       style={{
         minWidth: isMobile ? '280px' : 'var(--card-width)',
         aspectRatio: isMobile ? '16/10' : '16/9',
-        marginBottom: isHovered ? '120px' : '0',
+        marginBottom: isExpanded ? '120px' : '0',
         transition: 'margin-bottom 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       }}
     >
       {/* Base card */}
       <motion.div
         animate={{
-          scale: isHovered ? 1.3 : 1,
-          y: isHovered ? -12 : 0,
-          zIndex: isHovered ? 30 : 1,
+          scale: isExpanded ? (isMobile ? 1 : 1.3) : 1,
+          y: isExpanded ? (isMobile ? 0 : -12) : 0,
+          zIndex: isExpanded ? 30 : 1,
         }}
         transition={{ 
           duration: 0.35,
@@ -118,22 +128,21 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
           className="w-full h-full bg-cover bg-center rounded relative"
           style={{
             backgroundImage: `url(${video.thumbnail})`,
-            boxShadow: isHovered 
+            boxShadow: isExpanded 
               ? '0 32px 64px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.15)' 
               : '0 4px 12px rgba(0, 0, 0, 0.4)',
           }}
           animate={{
-            filter: isHovered ? 'brightness(1.15) contrast(1.05)' : 'brightness(1)',
-            borderRadius: isHovered ? '8px 8px 0 0' : '8px',
+            filter: isExpanded ? 'brightness(1.15) contrast(1.05)' : 'brightness(1)',
+            borderRadius: isExpanded ? '8px 8px 0 0' : '8px',
           }}
           transition={{ duration: 0.35 }}
-          onClick={handleCardClick}
         >
           {/* Gradient overlay - transparent on hover */}
           <motion.div 
             className="absolute inset-0"
             animate={{
-              opacity: isHovered ? 0 : 1,
+              opacity: isExpanded ? 0 : 1,
             }}
             transition={{ duration: 0.3 }}
             style={{
@@ -144,7 +153,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
 
           {/* Title on hover - separate from gradient */}
           <AnimatePresence>
-            {isHovered && (
+            {isExpanded && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -178,8 +187,8 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
             animate={{
-              scale: isMobile ? 1 : (isHovered ? 0.9 : 1),
-              opacity: isMobile ? 1 : (isHovered ? 0.7 : 1),
+              scale: isMobile ? 1 : (isExpanded ? 0.9 : 1),
+              opacity: isMobile ? 1 : (isExpanded ? 0.7 : 1),
             }}
             transition={{ duration: 0.2 }}
           >
@@ -188,7 +197,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
 
           {/* Hover play icon overlay */}
           <AnimatePresence>
-            {isHovered && (
+            {isExpanded && (
               <motion.div
                 key="play-overlay"
                 initial={{ opacity: 0, scale: 0.5 }}
@@ -199,6 +208,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
                 style={{
                   background: 'radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, transparent 70%)',
                 }}
+                onClick={handlePlayClick}
               >
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
@@ -221,7 +231,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
 
         {/* Hover expanded info panel */}
         <AnimatePresence>
-          {isHovered && (
+          {isExpanded && (
             <motion.div
               initial={{ opacity: 0, y: -15, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -391,7 +401,7 @@ export function VideoCard({ video, onCardClick, index, onCardHover }: VideoCardP
 
         {/* Title and category - fade out on hover */}
         <AnimatePresence>
-          {!isHovered && (
+          {!isExpanded && (
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
